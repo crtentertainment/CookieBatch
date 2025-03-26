@@ -1,6 +1,7 @@
 import random
 import string
 import sys
+import os
 import time
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
@@ -8,6 +9,17 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QFont, QFontDatabase, QIcon, QPixmap, QColor
 from PyQt6.QtCore import Qt, QPropertyAnimation, QPoint, QTimer, QSize
+
+# Add a function to check and validate icon paths
+def validate_icon_path(icon_path):
+    """
+    Check if the icon file exists and is readable.
+    If not, return None to prevent errors.
+    """
+    if os.path.exists(icon_path) and os.path.isfile(icon_path):
+        return icon_path
+    print(f"Icon not found or not accessible: {icon_path}")
+    return None
 
 # Create a global variable to hold a reference to the main window
 main_application_window = None
@@ -116,11 +128,14 @@ class StartScreen(QWidget):
         super().__init__()
         print("Initializing StartScreen")
         self.setWindowTitle("CookieBatch")
-        try:
-            self.setWindowIcon(QIcon("Icons\\favicon.ico"))
-            print("StartScreen icon loaded")
-        except Exception as e:
-            print(f"Could not load StartScreen icon: {e}")
+        
+        # Improved icon loading with validation
+        window_icon_path = validate_icon_path("Icons\\favicon.ico")
+        
+        if window_icon_path:
+            self.setWindowIcon(QIcon(window_icon_path))
+            print("StartScreen window icon loaded")
+        
         self.setupUI()
         
     def setupUI(self):
@@ -139,42 +154,24 @@ class StartScreen(QWidget):
         
         # Subtitle
         subtitle_font = QFont(font_family, 12)
-        subtitle_label = QLabel("Batch Code Obfuscator")
+        subtitle_label = QLabel("Python Batch Code Obfuscator")
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle_label.setStyleSheet(f"color: {TEXT_COLOR};")
         layout.addWidget(subtitle_label)
         
         # Add some space
-        layout.addSpacing(30)
-        
-        # Cookie icon or placeholder
-        try:
-            cookie_pixmap = QPixmap("Icons\\cookie.png")
-            cookie_label = QLabel()
-            cookie_label.setPixmap(cookie_pixmap.scaled(64, 64, Qt.AspectRatioMode.KeepAspectRatio))
-            cookie_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            layout.addWidget(cookie_label)
-            print("Cookie icon loaded")
-        except Exception as e:
-            print(f"Could not load cookie icon: {e}")
-            # Fallback if no icon is available
-            cookie_text = QLabel("🍪")
-            cookie_text.setFont(QFont(font_family, 32))
-            cookie_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            layout.addWidget(cookie_text)
-        
-        layout.addSpacing(30)
+        layout.addSpacing(50)  # Increased spacing to fill the area previously used by the icon
         
         # Start button
-        self.start_button = QPushButton("Start Obfuscator")
+        self.start_button = QPushButton("Start")
         self.start_button.setFont(QFont(font_family, 14))
         self.start_button.setMinimumHeight(50)
         self.start_button.setStyleSheet(BUTTON_STYLE)
         layout.addWidget(self.start_button)
         
         # Version info
-        version_label = QLabel("v1.0.0")
+        version_label = QLabel("v1.1.0")
         version_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         version_label.setStyleSheet(f"color: {DARKER_TEXT_COLOR};")
         layout.addWidget(version_label)
@@ -191,16 +188,19 @@ class ObfuscatorGUI(QWidget):
         super().__init__()
         print("Initializing ObfuscatorGUI")
         self.setWindowTitle("CookieBatch")
-        try:
-            self.setWindowIcon(QIcon("Icons\\favicon.ico"))
-            print("ObfuscatorGUI icon loaded")
-        except Exception as e:
-            print(f"Could not load ObfuscatorGUI icon: {e}")
+        
+        # Improved icon loading
+        window_icon_path = validate_icon_path("Icons\\favicon.ico")
+        if window_icon_path:
+            self.setWindowIcon(QIcon(window_icon_path))
+            print("ObfuscatorGUI window icon loaded")
+        
         self.setupUI()
         self.animation = None  # Store animation reference
         self.original_positions = {}  # Store original positions of widgets
         print("ObfuscatorGUI initialization complete")
 
+    # Rest of the ObfuscatorGUI class remains unchanged from the original code
     def setupUI(self):
         # Apply the same background color
         self.setStyleSheet(f"background-color: {BACKGROUND_COLOR};")
