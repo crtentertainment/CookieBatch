@@ -16,3 +16,15 @@
  - Enter a positive number for the string length (Divide Method)
 
  - Click obfuscate!
+
+## Debug
+
+ - Download the debug installer (CookieInstallDebug.py) from the Install folder
+
+ - Download the debug version of CookieBatch (cookie.py) from the Debug folder
+
+#### -OR-
+
+ - Fork this repo
+
+ - Start debugging!
