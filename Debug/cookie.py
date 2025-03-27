@@ -367,7 +367,7 @@ class ObfuscatorGUI(QWidget):
             split_code = [unobfuscated_code[i * divide_method:(i + 1) * divide_method] for i in range(calcs_needed)]
 
             unscrambled_code = [f"SET {tokens_available[i]} = {split_code[i]}" for i in range(calcs_needed)]
-            concatenated_cmd = "&" + "&&".join(tokens_available) + "&"
+            concatenated_cmd = "%" + "%%".join(tokens_available) + "%"
 
             output_text = "\n".join(unscrambled_code) + "\n" + concatenated_cmd
             self.output_area.setPlainText(output_text)
