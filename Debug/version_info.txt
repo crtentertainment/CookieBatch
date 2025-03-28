@@ -15,12 +15,12 @@ VSVersionInfo(
         u'040904b0',
         [StringStruct(u'CompanyName', u'CRTENTERTAINMENT'),
          StringStruct(u'FileDescription', u'A simple BATCH obfuscator coded in Python'),
-         StringStruct(u'FileVersion', u'1.0.0.0'),
+         StringStruct(u'FileVersion', u'1.4.0.0'),
          StringStruct(u'InternalName', u'CookieBatch'),
          StringStruct(u'LegalCopyright', u'© 2025 CRTENTERTAINMENT'),
          StringStruct(u'OriginalFilename', u'CookieBatch.exe'),
          StringStruct(u'ProductName', u'CookieBatch'),
-         StringStruct(u'ProductVersion', u'1.1.0.0')])
+         StringStruct(u'ProductVersion', u'1.4.0.0')])
     ]),
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])
   ]

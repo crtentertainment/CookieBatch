@@ -3,9 +3,11 @@ import string
 import sys
 import os
 import time
+import re
+import html
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel, QLineEdit,
-    QPushButton, QTextEdit, QHBoxLayout, QProgressBar, QDialog
+    QPushButton, QTextEdit, QHBoxLayout, QProgressBar, QDialog, QMessageBox
 )
 from PyQt6.QtGui import QFont, QFontDatabase, QIcon, QPixmap, QColor
 from PyQt6.QtCore import Qt, QPropertyAnimation, QPoint, QTimer, QSize
@@ -120,8 +122,8 @@ PROGRESS_BAR_STYLE = f"""
 """
 
 def generateGOT():
-    accepted_characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(accepted_characters) for _ in range(16))
+    accepted_characters = string.ascii_letters
+    return ''.join(random.choice(accepted_characters) for _ in range(64))
 
 class StartScreen(QWidget):
     def __init__(self):
@@ -171,7 +173,7 @@ class StartScreen(QWidget):
         layout.addWidget(self.start_button)
         
         # Version info
-        version_label = QLabel("v1.1.0")
+        version_label = QLabel("v1.4.0")
         version_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         version_label.setStyleSheet(f"color: {DARKER_TEXT_COLOR};")
         layout.addWidget(version_label)
@@ -200,7 +202,6 @@ class ObfuscatorGUI(QWidget):
         self.original_positions = {}  # Store original positions of widgets
         print("ObfuscatorGUI initialization complete")
 
-    # Rest of the ObfuscatorGUI class remains unchanged from the original code
     def setupUI(self):
         # Apply the same background color
         self.setStyleSheet(f"background-color: {BACKGROUND_COLOR};")
@@ -227,7 +228,7 @@ class ObfuscatorGUI(QWidget):
         layout.addSpacing(15)
 
         # Input for the code to obfuscate
-        self.code_label = QLabel("Enter BATCH code to obfuscate:")
+        self.code_label = QLabel("Enter a BATCH command to obfuscate:")
         self.code_label.setStyleSheet(f"color: {TEXT_COLOR};")
         layout.addWidget(self.code_label)
         self.code_input = QLineEdit()
@@ -330,7 +331,8 @@ class ObfuscatorGUI(QWidget):
     def cookie_obfuscate(self):
         try:
             print("Starting obfuscation process")
-            unobfuscated_code = self.code_input.text().strip()
+            # Remove .strip() to preserve whitespaces
+            unobfuscated_code = self.code_input.text()
             divide_text = self.divide_input.text().strip()
 
             try:
@@ -366,11 +368,40 @@ class ObfuscatorGUI(QWidget):
             tokens_available = [generateGOT() + str(i + 1) for i in range(calcs_needed)]
             split_code = [unobfuscated_code[i * divide_method:(i + 1) * divide_method] for i in range(calcs_needed)]
 
-            unscrambled_code = [f"SET {tokens_available[i]} = {split_code[i]}" for i in range(calcs_needed)]
-            concatenated_cmd = "%" + "%%".join(tokens_available) + "%"
+            # Use double quotes to preserve whitespaces
+            unscrambled_code = [f'SET "{tokens_available[i]}={split_code[i]}"' for i in range(calcs_needed)]
+            concatenated_cmd = "call " + "%" + "%%".join(tokens_available) + "%"
 
-            output_text = "\n".join(unscrambled_code) + "\n" + concatenated_cmd
-            self.output_area.setPlainText(output_text)
+            # Generate timestamp
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        
+            # Prepare output text with timestamp for file
+            file_output_text = f"# Obfuscation Timestamp: {timestamp}  #\n\n" + \
+                                "@echo off\n" + "setlocal enabledelayedexpansion\n" + \
+                                "\n".join(unscrambled_code) + "\n" + concatenated_cmd
+        
+            # Prepare output text without timestamp for display
+            display_output_text = "@echo off\n" + "setlocal enabledelayedexpansion\n" + \
+                                    "\n".join(unscrambled_code) + "\n" + concatenated_cmd
+        
+            # Display in output area without timestamp
+            self.output_area.setPlainText(display_output_text)
+        
+            # Write to output.log with timestamp
+            try:
+                with open("Output\\output.log", "a") as f:  # Use 'a' for append mode
+                    f.write(file_output_text + "\n\n---\n\n")  # Add separators between multiple outputs
+                print("Output also written to output.log")
+            except Exception as e:
+                print(f"Error writing to output.log: {e}")
+                # Optionally, show an error message to the user
+                error_dialog = QMessageBox()
+                error_dialog.setIcon(QMessageBox.Icon.Warning)
+                error_dialog.setText("Could not write to output.log")
+                error_dialog.setInformativeText(str(e))
+                error_dialog.setWindowTitle("File Write Error")
+                error_dialog.exec()
+        
             print("Obfuscation completed successfully")
         except Exception as e:
             print(f"Error in cookie_obfuscate: {e}")
