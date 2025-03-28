@@ -219,7 +219,7 @@ class ObfuscatorGUI(QWidget):
         
         # Subtitle
         subtitle_font = QFont(font_family, 10)
-        subtitle_label = QLabel("Batch Code Obfuscator")
+        subtitle_label = QLabel("Python Batch Code Obfuscator")
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle_label.setStyleSheet(f"color: {TEXT_COLOR};")
