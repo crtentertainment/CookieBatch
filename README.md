@@ -21,8 +21,6 @@
 
  - Download the debug installer (CookieInstallDebug.py) from the Install folder
 
- - Download the debug version of CookieBatch (cookie.py) from the Debug folder
-
 #### -OR-
 
  - Fork this repo
